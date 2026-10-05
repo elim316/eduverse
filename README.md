@@ -1,34 +1,45 @@
-# Welcome to Eduverse!
+# EduVerse
 
-Eduverse is a learning management system that keeps teachers in control of designing lesson plans and identifying links between topics. Teachers also control exactly what questions are shown to their students when creating assignments. Lastly, teachers also upload multimodal learning materials to aid students in actively revising while attempting questions.
+Awarded 2nd Place Overall at NUS LifeHack 2025.
+
+EduVerse is an adaptive learning management platform that keeps teachers in control of lesson design and question curation while personalising student revision using Knowledge Tracing models.
+
+## Overview
+
+Many educational platforms either rely on static worksheets or hand full control over to generative models without teacher oversight. EduVerse bridges that gap:
+
+- Teacher-led curriculum design: Teachers structure lesson plans, define prerequisite links between topics, and curate the exact questions assigned to students.
+- Multimodal revision materials: Teachers attach notes, worked examples, and media directly to topic nodes so students can revise actively while attempting questions.
+- Adaptive Knowledge Tracing (`kt_models`): A Python and PyTorch backend models each student's per-topic mastery over time and routes targeted revision material where gaps appear.
+
+## Architecture
+
+- Frontend: Next.js and TypeScript web application providing separate teacher authoring and student practice views.
+- ML Backend (`kt_models/`): Python service running Knowledge Tracing inference to estimate mastery probabilities across linked curriculum topics.
 
 ## Getting Started
-First, run the AI model:
+
+### 1. Start the Knowledge Tracing model service
+
 ```bash
 cd kt_models
 python -m venv venv
+# On macOS / Linux:
+source venv/bin/activate
+# On Windows:
 venv\Scripts\activate.bat
-pip install -r requirements.txt
-pip list #Check
-python main.py
 
+pip install -r requirements.txt
+python main.py
 ```
 
+### 2. Start the web application
 
-
-Next, run the development server:
+In a separate terminal from the repository root:
 
 ```bash
-npm i #install necessary libraries
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-
+Open [http://localhost:3000](http://localhost:3000) in your browser.
