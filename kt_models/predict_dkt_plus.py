@@ -14,7 +14,7 @@ model_config_path = os.path.join(ckpt_dir, "model_config.json")
 with open(model_config_path, "r") as f:
     config = json.load(f)
 
-state_dict = torch.load(checkpoint_path, map_location="cpu")
+state_dict = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
 num_q = state_dict["out_layer.weight"].shape[0]
 
 num_q = config.get("num_q", num_q)  # Fallback to default if not in config
@@ -26,7 +26,7 @@ lambda_w1 = config["lambda_w1"]
 lambda_w2 = config["lambda_w2"]
 
 model = DKTPlus(num_q, emb_size, hidden_size, lambda_r, lambda_w1, lambda_w2)
-model.load_state_dict(torch.load(checkpoint_path))
+model.load_state_dict(state_dict)
 model.eval()
  
 # # Example prediction

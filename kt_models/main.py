@@ -37,7 +37,7 @@ dktplus_ckpt = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "kt
 with open(os.path.join(dktplus_ckpt, "model_config.json")) as f:
     config = json.load(f)
 
-dktplus_state = torch.load(os.path.join(dktplus_ckpt, "model.ckpt"), map_location="cpu")
+dktplus_state = torch.load(os.path.join(dktplus_ckpt, "model.ckpt"), map_location="cpu", weights_only=True)
 num_q = dktplus_state["out_layer.weight"].shape[0]
 
 dktplus_model = DKTPlus(
@@ -56,7 +56,7 @@ dkt_ckpt = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "kt_mod
 with open(os.path.join(dkt_ckpt, "model_config.json")) as f:
     dkt_config = json.load(f)
 
-dkt_state = torch.load(os.path.join(dkt_ckpt, "model.ckpt"), map_location="cpu")
+dkt_state = torch.load(os.path.join(dkt_ckpt, "model.ckpt"), map_location="cpu", weights_only=True)
 dkt_num_q = dkt_state["out_layer.weight"].shape[0]
 
 dkt_model = DKT(
@@ -84,6 +84,8 @@ def run_dktplus_model(q_ids, correctness, confidence, difficulty):
 async def predict(input: PredictionRequest):
     try:
         seq_len = len(input.q_ids)
+        if seq_len == 0 or seq_len > 1000:
+            raise HTTPException(status_code=400, detail="Input sequence length must be between 1 and 1000.")
 
         # === Check array lengths ===
         if not all(len(arr) == seq_len for arr in [input.correctness, input.confidence, input.difficulty]):
@@ -127,6 +129,9 @@ async def predict(input: PredictionRequest):
             "predicted_probabilities": probs
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print("Prediction error:", e)
+        raise HTTPException(status_code=500, detail="Internal server error during prediction.")
 

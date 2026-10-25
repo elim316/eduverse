@@ -15,7 +15,7 @@ with open(model_config_path, "r") as f:
     config = json.load(f)
 
 # === Detect num_q from checkpoint ===
-state_dict = torch.load(checkpoint_path, map_location="cpu")
+state_dict = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
 num_q = state_dict["out_layer.weight"].shape[0]
 # Debug statement
 # print("Detected num_q from checkpoint:", num_q)
